@@ -24,8 +24,8 @@ Line: END	      {/*printf("Got only end\n");*/}
 ;
 
 Expression:
-  REGDUMP END               {}
-| MEMDUMP ADDR NUM END      {}
+  REGDUMP END               {print_regdump();}
+| MEMDUMP ADDR NUM END      {print_memdump($2,$3);}
 | STEP END                  {}        
 
 | REGDUMP er {/*printf("Got and error\n");*/}
@@ -41,8 +41,49 @@ Expression:
 void initialise()
 {
     numins=0;
+    int i=0;
+    for(i=0;i<34;++i)
+    {reg[i]=0;}
+    reg[34]=0x00400000;//pc=0x00400000
 
+    for(i=0;i<64000005;++i)
+    {mem[i]=0;}
 }
+
+void print_regdump()
+{
+    int i=0;
+    for(i=0;i<32;++i)
+    {printf("$%02d: 0x%08x \n",i,reg[i]);}
+    
+    printf("hi: 0x%08x \n",reg[32]);
+    printf("lo: 0x%08x \n",reg[33]);
+    printf("pc: 0x%08x \n",reg[34]);
+}
+
+void print_memdump(int addr,int num)
+{
+    if(addr<0x10010000)
+    {fprintf(stderr,"Error - Address given is out of range\n");}
+    else if(addr>0x10010000+64000000)
+    {fprintf(stderr,"Error - Address given is out of range\n");}
+    else 
+    {
+        int i=0;
+        for(i=0;i<num;++i)
+        {printf("0x%08x: 0x%02x\n",addr+i,mem[addr-0x10010001+i]);}
+    }
+}
+
+void llinttobinary(long long int a,int num)
+{
+    long long int b=a;
+    int j;
+    for(j=31;j>=0;--j)
+    {ins_string[num][j]=b%2+'0';b/=2;}
+    //ins_string[num][32]='\0';  
+}
+
 void input_hexin()
 {
     if (hexin == NULL) {
@@ -52,7 +93,11 @@ void input_hexin()
 
     int x=1;
     char str[1000];
-    
+
+    ins=(long long int *)calloc((1e7+10),sizeof(long long int));
+    ins_string = (char**)calloc((1e7+10), sizeof(char*));
+  
+
     numins=0;
     while(fscanf(hexin,"%s",str)!=EOF)
     {
@@ -66,9 +111,15 @@ void input_hexin()
                 {fprintf(stderr,"Error - Invalid instruction number %d\n",x);
                 goto label;}
             }
+                   
 
-            ins[numins++]=(long long int)strtol(str, NULL, 16);
+            ins[numins]=(long long int)strtol(str, NULL, 16);//hex string to long long int
+            ins_string[numins] = (char*)calloc(32, sizeof(char));            
+            llinttobinary(ins[numins],numins);
 
+
+    printf("ins_string[%d]=\"%s\"  len=%lu  ins[%d]=%lld\n",numins,ins_string[numins],strlen(ins_string[numins]),numins,ins[numins]);
+            ++numins;
         }
         else
         {fprintf(stderr,"Error - Invalid instruction number %d\n",x);}
@@ -89,7 +140,7 @@ void test_hexin()
     }
 }
 
-int main(int argc, char* argv[]) //TODO take file names from command line
+int main(int argc, char* argv[])
 {
     initialise();
     int printres=0;
@@ -145,12 +196,16 @@ int main(int argc, char* argv[]) //TODO take file names from command line
     }
 
 
-    input_hexin();
-//    test_hexin();
+
+    simulate();
+
+    if(printres==1)//output the result file
+    {
+        //TODO
+    }
 
 
 
-/*
     //change to keep parsing multiple times because we just want to ignore the wrong line
     do {
         yyparse();
@@ -159,7 +214,7 @@ int main(int argc, char* argv[]) //TODO take file names from command line
     //	test_print();	//debug
 
 
-
+/*
  	for(i=0;i<numnets;++i)
  	{
  		
