@@ -16,6 +16,7 @@ hex [0-9A-F]+
 <INITIAL>"memdump"		{  printf("Intial = \"%s\"\n",yytext);BEGIN TEMP; return MEMDUMP;}
 <INITIAL>"regdump"		 {  /*printf("Intial = \"%s\"\n",yytext);*/BEGIN EXPECTINGEND; return REGDUMP;}
 <INITIAL>"step"		 {  /*printf("Intial = \"%s\"\n",yytext);*/BEGIN EXPECTINGEND;/*printf("2\n");*/ return STEP;}
+<INITIAL>("quit"|"QUIT")		 {  /*printf("Intial = \"%s\"\n",yytext);*/BEGIN EXPECTINGEND;/*printf("2\n");*/ return QUIT;}
 <TEMP>("0x"|"0X")  { printf("Consumed - \"%s\"\n",yytext);BEGIN TERMINAL1; }
 <TEMP>[0-9]+	  { yylval.addr=atoi(yytext); printf("TEMP = \"%s\"\n",yytext);BEGIN valuetemp;/*printf("4\n");*/ return ADDR;}
 
@@ -32,7 +33,7 @@ hex [0-9A-F]+
 <ERR>[^ \t\n]* {/* printf("Err match = \"%s\"\n",yytext);*/ BEGIN ERR;}
 <INITIAL>[^ \t\n]* {/* printf("Err match = \"%s\"\n",yytext);*/BEGIN ERR;}
 <TERMINAL1>[^ \t\n]* {/* printf("Err match = \"%s\"\n",yytext);*/BEGIN ERR;}
-<EXPECTINGEND>[\n] {printf("Matched End\n");BEGIN INITIAL;/*printf("12\n");*/ /*printf("%d\n",yylineno);*/yylineno++;return END;}
+<EXPECTINGEND>[\n] {/*printf("Matched End\n");BEGIN INITIAL;*//*printf("12\n");*/ /*printf("%d\n",yylineno);*/yylineno++;return END;}
 . 					{yyerror("Error - Format of input is wrong 2");}
 [\n] {/*printf("Matched stray \"\\n\"\n");*/ BEGIN INITIAL; fprintf(stderr,"Syntax Error in line %d\n",yylineno);/*printf("%d\n",yylineno);*/yylineno++; return er;}
 %%

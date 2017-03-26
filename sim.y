@@ -11,7 +11,8 @@ int yylex();
 %token MEMDUMP REGDUMP
 %token <addr> ADDR 
 %token <num> NUM
-%token er END STEP
+%token er END 
+%token STEP QUIT
 %start Input
 %%
 
@@ -27,6 +28,8 @@ Expression:
   REGDUMP END               {print_regdump();}
 | MEMDUMP ADDR NUM END      {print_memdump($2,$3);}
 | STEP END                  {}        
+| QUIT END                  {return 100;}
+;
 
 | REGDUMP er {/*printf("Got and error\n");*/}
 | MEMDUMP ADDR NUM er {}
@@ -40,7 +43,8 @@ Expression:
 
 void initialise()
 {
-    numins=0;
+    iacc=dacc=numins=0;
+    
     int i=0;
     for(i=0;i<34;++i)
     {reg[i]=0;}
@@ -140,10 +144,19 @@ void test_hexin()
     }
 }
 
+void test()
+{
+    char ch=-3;
+    int a=(int)ch;
+    printf("ch=%d  a=%d\n",ch,a);
+}
+
 int main(int argc, char* argv[])
 {
     initialise();
     int printres=0;
+
+    //test();
 
     if(argc == 3)
     {
@@ -199,51 +212,54 @@ int main(int argc, char* argv[])
 
     simulate();
 
-    if(printres==1)//output the result file
-    {
-        //TODO
-    }
-
-
 
     //change to keep parsing multiple times because we just want to ignore the wrong line
     do {
-        yyparse();
+        int temp=yyparse();
+        if(temp==100)
+        {break;}
     } while (!feof(yyin));
 
     //	test_print();	//debug
 
 
-/*
- 	for(i=0;i<numnets;++i)
- 	{
- 		
-        if(times[i]==1)
- 		{
-            fprintf(stderr,"Error - Net: \"%s\" is connected to only one component\n",arr[i]);
-        }
- 	}
 
-    int is_draw_ground = 0;
-
-    if(!check_ground())
+    if(printres==1)//output the result file
     {
-        fprintf(stderr,"Error - No ground net found\n");
-    }
-    else
-    {
-        is_draw_ground = 1;
+        print_result();
     }
 
-    start_svg(numnets,numcmp,outfile);
-
-
-    end_svg(outfile);
-
-    solve_circuit();
-*/
 
     return 0;
+}
+
+void print_result()//-------------TODO
+{
+    /*Instructions,27
+    Cycles,31
+    IPC,0.8710
+    Time (ns),15.5000
+    Idle time (ns),2
+    Idle time (%),12.9032%
+    Cache Summary
+    Cache L1-I
+    num cache accesses,27
+    Cache L1-D
+    num cache accesses,2
+    */
+    fprintf(resout,"Instructions,%d\n",iacc);
+    fprintf(resout,"Cycles,%d\n",iacc);
+    fprintf(resout,"IPC,%d\n",iacc);
+    fprintf(resout,"Time (ns),%d\n",iacc);
+    fprintf(resout,"Idle time (ns),%d\n",iacc);
+    fprintf(resout,"Idle time (%%),%d\n",iacc);
+
+    fprintf(resout,"Cache Summary\n");
+    fprintf(resout,"Cache L1-I\n");
+    fprintf(resout,"num cache accesses,%d\n",iacc);
+    fprintf(resout,"Cache L1-D\n");
+    fprintf(resout,"num cache accesses,%d\n",dacc);
+
 }
 
 //print error but don't exit

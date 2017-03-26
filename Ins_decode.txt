@@ -3,10 +3,18 @@
 3)add rd,rs,rt
 4)sub rd,rs,rt
 5)addi rt,rs,imm
+
 6)and rd,rs,rt
 7)or rd,rs,rt
 8)ori rt, rs, imm
 9)lui rt, imm
 10)mult rs,rt
-11)
-12)
+
+11)madd rs, rt
+12)nor rd, rs, rt
+13)lb rt, address
+14)sb rt, address
+15)
+
+16)
+17)
