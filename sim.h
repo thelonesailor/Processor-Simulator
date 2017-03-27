@@ -21,22 +21,23 @@ int reg[35];
 char mem[64000005];
 int iacc,dacc;
 
+int curr;
+
 struct INST{
   int type; 
   int Rs,Rt,Rd;
   int s,t,d;
   int Offset;
+  int invalid;
 };
 struct INST *decoded;
 
 
 struct IF{
-  int pc;
   struct INST Ins;
 };
 
 struct ID{
-  int pc;
   int branch_target;
   
   int vrs,vrt,vrd;
@@ -45,18 +46,13 @@ struct ID{
 };
 
 struct EX{
-  int pc;
-  int aluresult;
-  
   int vrs,vrt,vrd;
 
   int address;
-  int op2;
   struct INST Ins;
 };
 
 struct MA{
-  int pc;
   int vrs,vrt,vrd;
 
   struct INST Ins;
@@ -73,9 +69,11 @@ void test_decode();
 char * subst(char *a, int start,int num);
 void llinttobinary(long long int a,int num);
 
+void step();
 
 void simulate();
 void execute();
+void execute2();
 
 
 #endif

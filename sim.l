@@ -33,7 +33,7 @@ hex [0-9A-F]+
 <ERR>[^ \t\n]* {/* printf("Err match = \"%s\"\n",yytext);*/ BEGIN ERR;}
 <INITIAL>[^ \t\n]* {/* printf("Err match = \"%s\"\n",yytext);*/BEGIN ERR;}
 <TERMINAL1>[^ \t\n]* {/* printf("Err match = \"%s\"\n",yytext);*/BEGIN ERR;}
-<EXPECTINGEND>[\n] {/*printf("Matched End\n");BEGIN INITIAL;*//*printf("12\n");*/ /*printf("%d\n",yylineno);*/yylineno++;return END;}
+<EXPECTINGEND>[\n] {/*printf("Matched End\n");*/BEGIN INITIAL;/*printf("12\n");*/ /*printf("%d\n",yylineno);*/yylineno++;return END;}
 . 					{yyerror("Error - Format of input is wrong 2");}
 [\n] {/*printf("Matched stray \"\\n\"\n");*/ BEGIN INITIAL; fprintf(stderr,"Syntax Error in line %d\n",yylineno);/*printf("%d\n",yylineno);*/yylineno++; return er;}
 %%

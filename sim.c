@@ -94,11 +94,10 @@ void decode(char * str,int i)
 
 	offset=btoi(subst(str,16,16),16);
 	}
-	else if (strcmp(subst(str,0,6),"001111")==0 && strcmp(subst(str,6,5),"00000")==0)	//------lui rt,rs,imm
+	else if (strcmp(subst(str,0,6),"001111")==0 && strcmp(subst(str,6,5),"00000")==0)	//------lui rt,imm
 	{
 		type=9;
 
-	rs=btoi(subst(str,6,5),5);			s=1;
 	rt=btoi(subst(str,11,5),5);			t=2;
 
 	offset=btoi(subst(str,16,16),16);
@@ -109,7 +108,7 @@ void decode(char * str,int i)
 
 	rs=btoi(subst(str,6,5),5);			s=1;	
 	rt=btoi(subst(str,11,5),5);			t=1;
-
+	
 	}
 	else if (strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,16,10),"0000000000")==0 && strcmp(subst(str,26,6),"011000")==0)	//TODO------madd rs,rt
 	{
@@ -117,7 +116,7 @@ void decode(char * str,int i)
 
 	rs=btoi(subst(str,6,5),5);			s=1;
 	rt=btoi(subst(str,11,5),5);			t=1;
-
+	
 	}
 	else if(strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,21,5),"00000")==0 && strcmp(subst(str,26,6),"100111")==0) //--nor rd,rs,rt
 	{
@@ -146,6 +145,83 @@ void decode(char * str,int i)
 		
 		offset=btoi(subst(str,16,16),16);
 	}
+	else if(strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,21,5),"00000")==0 && strcmp(subst(str,26,6),"000100")==0) //--sllv rd, rt, rs
+	{
+		type=15;
+
+		rs=btoi(subst(str,6,5),5);			s=1;
+		rt=btoi(subst(str,11,5),5);			t=1;
+		rd=btoi(subst(str,16,5),5);			d=2;
+		
+	}
+	else if(strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,21,5),"00000")==0 && strcmp(subst(str,26,6),"101011")==0) //--sltu rd, rs, rt
+	{
+		type=16;
+
+		rs=btoi(subst(str,6,5),5);			s=1;
+		rt=btoi(subst(str,11,5),5);			t=1;
+		rd=btoi(subst(str,16,5),5);			d=2;
+			
+	}
+	else if(strcmp(subst(str,0,6),"001010")==0) //--slti rt, rs, imm
+	{
+		type=17;
+
+		rs=btoi(subst(str,6,5),5);			s=1;
+		rt=btoi(subst(str,11,5),5);			t=2;
+		
+		offset=btoi(subst(str,16,16),16);		
+	}
+	else if(strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,26,6),"000000")==0) //--sll rd, rt, shamt
+	{
+		type=18;
+
+		rt=btoi(subst(str,11,5),5);			t=1;
+		rd=btoi(subst(str,16,5),5);			d=2;
+	
+		offset=btoi(subst(str,21,5),5);				
+	}
+	else if(strcmp(subst(str,0,6),"000100")==0) //--beq rs, rt, label
+	{
+		type=19;
+
+		rs=btoi(subst(str,6,5),5);			s=1;
+		rt=btoi(subst(str,11,5),5);			t=1;
+		
+		offset=btoi(subst(str,16,16),16);		
+	}
+	else if(strcmp(subst(str,0,6),"000001")==0 && strcmp(subst(str,11,5),"00001")==0) //--bgez rs, label
+	{
+		type=20;
+
+		rs=btoi(subst(str,6,5),5);			s=1;
+		
+		offset=btoi(subst(str,16,16),16);		
+	}
+	else if(strcmp(subst(str,0,6),"000111")==0 && strcmp(subst(str,11,5),"00000")==0) //--bgtz rs, labels
+	{
+		type=21;
+
+		rs=btoi(subst(str,6,5),5);			s=1;
+		
+		offset=btoi(subst(str,16,16),16);		
+	}
+	else if(strcmp(subst(str,0,6),"000110")==0 && strcmp(subst(str,11,5),"00000")==0) //--blez rs, label
+	{
+		type=22;
+
+		rs=btoi(subst(str,6,5),5);			s=1;
+		
+		offset=btoi(subst(str,16,16),16);		
+	}
+	else if(strcmp(subst(str,0,6),"000001")==0 && strcmp(subst(str,11,5),"00000")==0) //--bltz rs, label
+	{
+		type=23;
+
+		rs=btoi(subst(str,6,5),5);			s=1;
+		
+		offset=btoi(subst(str,16,16),16);		
+	}
 
 
 	if(type==-1)
@@ -163,14 +239,9 @@ void decode(char * str,int i)
 
 	decoded[i].Offset=offset;
 
+	decoded[i].invalid=0;	
 }
 
-/*
-Following is the list of supported instructions (for part1):
-The memory-reference instructions load word ( lw ) and store word ( sw )
-The arithmetic-logical instructions add , sub , AND , OR , and slt
-The instructions branch equal ( beq ) and jump (j)
-*/
 
 void simulate()
 {
@@ -188,7 +259,7 @@ void simulate()
 	}
 	test_decode();
 
-	execute();
+	execute2();
 
 }
 
@@ -258,18 +329,18 @@ void execute()
 		}
 		else if(type==9)
 		{
-			reg[rt]=65536*offset;	
+			reg[rt]=(offset<<16);	
 		}
 		else if(type==10)
 		{
-			long long int temp=(long long int)reg[rt]*(long long int)reg[rt];	
+			long long int temp=(long long int)reg[rs]*(long long int)reg[rt];	
 			//hi is 32 , lo is 33
 			reg[33]=temp%(1LL<<32);
 			reg[32]=(temp>>32);				
 		}
 		else if(type==11)//TODO carry
 		{
-			long long int temp=(long long int)reg[rt]*(long long int)reg[rt];	
+			//long long int temp=(long long int)reg[rt]*(long long int)reg[rt];	
 			//hi is 32 , lo is 33
 			
 		}
@@ -308,7 +379,9 @@ void test_decode()
 	int i=0;
 	for(i=0;i<numins;++i)
 	{
-
+		printf("type=%d \n",decoded[i].type);
+		printf("Rs=%d Rt=%d Rd=%d \n",decoded[i].Rs,decoded[i].Rt,decoded[i].Rd);
+		printf("s =%d t =%d d =%d \n\n",decoded[i].s,decoded[i].t,decoded[i].d);				
 	}
 }
 

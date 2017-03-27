@@ -3,18 +3,29 @@
 3)add rd,rs,rt
 4)sub rd,rs,rt
 5)addi rt,rs,imm
-
 6)and rd,rs,rt
 7)or rd,rs,rt
 8)ori rt, rs, imm
 9)lui rt, imm
 10)mult rs,rt
-
 11)madd rs, rt
 12)nor rd, rs, rt
 13)lb rt, address
 14)sb rt, address
-15)
+15)sllv rd, rt, rs
+16)sltu rd, rs, rt
+17)slti rt, rs, imm
+18)sll rd, rt, shamt
+19)beq rs, rt, label
+20)bgez rs, label
+21)bgtz rs, label
+22)blez rs, label
+23)bltz rs, label
 
-16)
-17)
+
+
+Correct strcmp in if 
+Correct type
+Correct registers taken
+R/W of registers is correct
+Offset taken only when required 

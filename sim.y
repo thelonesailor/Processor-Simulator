@@ -27,7 +27,7 @@ Line: END	      {/*printf("Got only end\n");*/}
 Expression:
   REGDUMP END               {print_regdump();}
 | MEMDUMP ADDR NUM END      {print_memdump($2,$3);}
-| STEP END                  {}        
+| STEP END                  {step();}        
 | QUIT END                  {return 100;}
 ;
 
@@ -56,7 +56,7 @@ void initialise()
 
 void print_regdump()
 {
-    int i=0;
+    int i;
     for(i=0;i<32;++i)
     {printf("$%02d: 0x%08x \n",i,reg[i]);}
     
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
 
     //test();
 
-    if(argc == 3)
+    /*if(argc == 3)
     {
         hexin=fopen(argv[1],"r");
         if (hexin == NULL) {
@@ -201,7 +201,14 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Error - 3 or 4 arguments required! Now %d arguments given\n",argc);
         exit(-1);
     }
-    
+    */
+    hexin=fopen("in1.hex","r");
+    if (hexin == NULL) {
+    fprintf(stderr,"Error - Input hex file \"%s\" not found\n",argv[1]);
+    exit(-1);
+    }
+
+
     yyin = stdin;
     if (yyin == NULL) {
         fprintf(stderr,"Error - yyin is null\n");
