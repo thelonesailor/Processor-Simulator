@@ -110,7 +110,7 @@ void decode(char * str,int i)
 	rt=btoi(subst(str,11,5),5);			t=1;
 	
 	}
-	else if (strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,16,10),"0000000000")==0 && strcmp(subst(str,26,6),"011000")==0)	//TODO------madd rs,rt
+	else if (strcmp(subst(str,0,6),"011100")==0 && strcmp(subst(str,16,10),"0000000000")==0 && strcmp(subst(str,26,6),"000000")==0)	//TODO------madd rs,rt
 	{
 		type=11;
 
@@ -225,7 +225,7 @@ void decode(char * str,int i)
 
 
 	if(type==-1)
-	{printf("Error - unable to decode instruction %d\n",i);}
+	{printf("Error - unable to decode instruction no.%d\n",i+1);}
 
 	decoded[i].type=type;
 	
@@ -257,7 +257,7 @@ void simulate()
 	{
 		decode(ins_string[i],i);
 	}
-	test_decode();
+	//test_decode();
 
 	execute2();
 

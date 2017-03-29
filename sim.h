@@ -19,7 +19,7 @@ char** ins_string;// ins as bit strings
 
 int reg[35];
 char mem[64000005];
-int iacc,dacc;
+int iacc,dacc,numcycles;
 
 int curr;
 
@@ -29,6 +29,7 @@ struct INST{
   int s,t,d;
   int Offset;
   int invalid;
+  int stall;
 };
 struct INST *decoded;
 
@@ -48,7 +49,7 @@ struct ID{
 struct EX{
   int vrs,vrt,vrd;
 
-  int address;
+  long long int address;
   struct INST Ins;
 };
 
@@ -57,6 +58,11 @@ struct MA{
 
   struct INST Ins;
 };
+
+struct IF inf[2];
+struct ID id[2];
+struct EX ex[2];
+struct MA ma[2];
 
 
 void yyerror(char* );
@@ -69,8 +75,10 @@ void test_decode();
 char * subst(char *a, int start,int num);
 void llinttobinary(long long int a,int num);
 
-void step();
+int yyparse();
 
+void step();
+void printsvg();
 void simulate();
 void execute();
 void execute2();

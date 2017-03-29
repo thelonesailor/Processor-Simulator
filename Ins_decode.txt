@@ -22,7 +22,12 @@
 22)blez rs, label
 23)bltz rs, label
 
+rt<-rd
+rs<-rd
 
+rs<-rt
+
+rt<-rt
 
 Correct strcmp in if 
 Correct type

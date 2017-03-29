@@ -12,7 +12,7 @@ int yylex();
 %token <addr> ADDR 
 %token <num> NUM
 %token er END 
-%token STEP QUIT
+%token STEP QUIT GOTOEND
 %start Input
 %%
 
@@ -25,10 +25,11 @@ Line: END	      {/*printf("Got only end\n");*/}
 ;
 
 Expression:
-  REGDUMP END               {print_regdump();}
-| MEMDUMP ADDR NUM END      {print_memdump($2,$3);}
-| STEP END                  {step();}        
+  REGDUMP END               {print_regdump();printf("Shell>>");}
+| MEMDUMP ADDR NUM END      {print_memdump($2,$3);printf("Shell>>");}
+| STEP END                  {return 50;}        
 | QUIT END                  {return 100;}
+| GOTOEND END               {return 150;}
 ;
 
 | REGDUMP er {/*printf("Got and error\n");*/}
@@ -43,7 +44,7 @@ Expression:
 
 void initialise()
 {
-    iacc=dacc=numins=0;
+    iacc=dacc=numins=numcycles=0;
     
     int i=0;
     for(i=0;i<34;++i)
@@ -122,7 +123,7 @@ void input_hexin()
             llinttobinary(ins[numins],numins);
 
 
-    printf("ins_string[%d]=\"%s\"  len=%lu  ins[%d]=%lld\n",numins,ins_string[numins],strlen(ins_string[numins]),numins,ins[numins]);
+    //printf("ins_string[%d]=\"%s\"  len=%lu  ins[%d]=%lld\n",numins,ins_string[numins],strlen(ins_string[numins]),numins,ins[numins]);
             ++numins;
         }
         else
@@ -200,14 +201,24 @@ int main(int argc, char* argv[])
     {
         fprintf(stderr, "Error - 3 or 4 arguments required! Now %d arguments given\n",argc);
         exit(-1);
-    }
-    */
-    hexin=fopen("in1.hex","r");
+    }*/
+    
+    hexin=fopen("in5.hex","r");
     if (hexin == NULL) {
     fprintf(stderr,"Error - Input hex file \"%s\" not found\n",argv[1]);
     exit(-1);
-    }
+    }    printres=1; 
 
+    svgout=fopen("test5.svg","w");
+    if (svgout == NULL) {
+    fprintf(stderr,"Error - Output svg file \"%s\" not found\n",argv[2]);
+    exit(-1);
+    }
+    resout=fopen("results5.txt","w");
+    if (resout == NULL) {
+    fprintf(stderr,"Error - Output result file \"%s\" not found\n",argv[3]);
+    exit(-1);
+    }
 
     yyin = stdin;
     if (yyin == NULL) {
@@ -221,14 +232,14 @@ int main(int argc, char* argv[])
 
 
     //change to keep parsing multiple times because we just want to ignore the wrong line
-    do {
+    /*do {
         int temp=yyparse();
         if(temp==100)
         {break;}
     } while (!feof(yyin));
+    */
 
     //	test_print();	//debug
-
 
 
     if(printres==1)//output the result file
@@ -255,7 +266,7 @@ void print_result()//-------------TODO
     num cache accesses,2
     */
     fprintf(resout,"Instructions,%d\n",iacc);
-    fprintf(resout,"Cycles,%d\n",iacc);
+    fprintf(resout,"Cycles,%d\n",numcycles);
     fprintf(resout,"IPC,%d\n",iacc);
     fprintf(resout,"Time (ns),%d\n",iacc);
     fprintf(resout,"Idle time (ns),%d\n",iacc);
@@ -266,7 +277,6 @@ void print_result()//-------------TODO
     fprintf(resout,"num cache accesses,%d\n",iacc);
     fprintf(resout,"Cache L1-D\n");
     fprintf(resout,"num cache accesses,%d\n",dacc);
-
 }
 
 //print error but don't exit

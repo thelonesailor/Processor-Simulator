@@ -1,7 +1,7 @@
 #!/bin/bash
-for i in {1..1};
+for i in {1..5};
 do
 	echo "Test case $i";
-	./processor_simulator in$i.hex test$i.svg results$i.txt 
+	./processor_simulator Testcases/testcase$i/in$i.hex test$i.svg results$i.txt 
 	echo "---------------";
 done;
