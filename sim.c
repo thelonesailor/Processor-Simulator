@@ -2,13 +2,45 @@
 
 
 
-int btoi(char *a,int num)
+int btoi(char *a,int num)//wrong
 {
+	if(a[0]=='0')
+	{
 	int res=0,i=0;
 	for(i=0;i<num;++i)
 	{res=2*res + (a[i]-'0');}
 	
 	return res;
+	}
+	else 
+	{
+
+		int i,j;
+		for(j=num-1;j>=0;--j)
+		{
+			if(a[j]=='1')
+			{break;}
+		}
+
+		a[j]='0';
+		for(i=j+1;i<num;++i)
+		{a[i]='1';}
+
+		for(i=0;i<num;++i)
+		{
+			if(a[i]=='1')
+			{a[i]='0';}
+			else
+			{a[i]='1';}
+		}
+
+	int res=0;
+	for(i=0;i<num;++i)
+	{res=2*res + (a[i]-'0');}
+	
+	return -1*res;
+		
+	}
 }
 
 //1 has to read
@@ -229,6 +261,8 @@ void decode(char * str,int i)
 
 	decoded[i].type=type;
 	
+	decoded[i].id=i+1;
+	
 	decoded[i].Rs=rs;
 	decoded[i].Rt=rt;
 	decoded[i].Rd=rd;
@@ -258,7 +292,8 @@ void simulate()
 		decode(ins_string[i],i);
 	}
 	//test_decode();
-
+	//printf("sim1\n");
+	//fflush(stdout);    
 	execute2();
 
 }

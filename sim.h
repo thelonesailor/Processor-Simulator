@@ -30,6 +30,7 @@ struct INST{
   int Offset;
   int invalid;
   int stall;
+  int id;
 };
 struct INST *decoded;
 

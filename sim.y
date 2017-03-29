@@ -201,22 +201,22 @@ int main(int argc, char* argv[])
     {
         fprintf(stderr, "Error - 3 or 4 arguments required! Now %d arguments given\n",argc);
         exit(-1);
-    }*/
-    
-    hexin=fopen("in5.hex","r");
+    }
+    */
+    hexin=fopen("in6.hex","r");
     if (hexin == NULL) {
-    fprintf(stderr,"Error - Input hex file \"%s\" not found\n",argv[1]);
+    fprintf(stderr,"Error - Input hex file \"%s\" not found\n","");
     exit(-1);
     }    printres=1; 
 
-    svgout=fopen("test5.svg","w");
+    svgout=fopen("test6.svg","w");
     if (svgout == NULL) {
-    fprintf(stderr,"Error - Output svg file \"%s\" not found\n",argv[2]);
+    fprintf(stderr,"Error - Output svg file \"%s\" not found\n","");
     exit(-1);
     }
-    resout=fopen("results5.txt","w");
+    resout=fopen("results6.txt","w");
     if (resout == NULL) {
-    fprintf(stderr,"Error - Output result file \"%s\" not found\n",argv[3]);
+    fprintf(stderr,"Error - Output result file \"%s\" not found\n","");
     exit(-1);
     }
 
@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
     }
 
 
-
+//    printf("sim\n");
     simulate();
 
 
@@ -247,30 +247,27 @@ int main(int argc, char* argv[])
         print_result();
     }
 
+    fclose(hexin);
+    fclose(svgout);
+    fclose(resout);
 
     return 0;
 }
 
 void print_result()//-------------TODO
 {
-    /*Instructions,27
-    Cycles,31
-    IPC,0.8710
-    Time (ns),15.5000
-    Idle time (ns),2
-    Idle time (%),12.9032%
-    Cache Summary
-    Cache L1-I
-    num cache accesses,27
-    Cache L1-D
-    num cache accesses,2
-    */
+
     fprintf(resout,"Instructions,%d\n",iacc);
     fprintf(resout,"Cycles,%d\n",numcycles);
-    fprintf(resout,"IPC,%d\n",iacc);
-    fprintf(resout,"Time (ns),%d\n",iacc);
-    fprintf(resout,"Idle time (ns),%d\n",iacc);
-    fprintf(resout,"Idle time (%%),%d\n",iacc);
+    double ipc=iacc*1.0/numcycles*1.0;
+    fprintf(resout,"IPC,%.04lf\n",ipc);
+
+    double Time=numcycles*0.5;
+    fprintf(resout,"Time (ns),%.04lf\n",Time);
+    
+    double Idle_time=(numcycles-iacc)*0.5;
+    fprintf(resout,"Idle time (ns),%.4lf\n",Idle_time);
+    fprintf(resout,"Idle time (%%),%.04lf%%\n",(Idle_time/Time)*100.0);
 
     fprintf(resout,"Cache Summary\n");
     fprintf(resout,"Cache L1-I\n");
