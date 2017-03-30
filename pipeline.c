@@ -342,9 +342,7 @@ void WB()
 	{reg[ma[1].Ins.Rs]=ma[1].vrs;}
 
 	if(ma[1].Ins.t==2)
-	{reg[ma[1].Ins.Rt]=ma[1].vrt;
-
-	}
+	{reg[ma[1].Ins.Rt]=ma[1].vrt;}
 
 	if(ma[1].Ins.d==2)
 	{reg[ma[1].Ins.Rd]=ma[1].vrd;}
@@ -359,7 +357,7 @@ void transfer()
 	if(ma[1].Ins.invalid==0 && ma[1].Ins.type>0)//notinvalid
 	{++iacc;}
 
-	inf[1]=inf[0];//TODO-------check
+	inf[1]=inf[0];//TODO-------check......correct
 	id[1]=id[0];
 	ex[1]=ex[0];
 	ma[1]=ma[0];
@@ -369,8 +367,10 @@ void transfer()
 void execute2()
 {
 	int pc,flag=0;
+	st=0;
 	curr=0;
 
+	inf[0].Ins.invalid=1;	
 	inf[1].Ins.invalid=1;	
 	id[0].Ins.invalid=1;
 	id[1].Ins.invalid=1;
@@ -382,74 +382,71 @@ void execute2()
 	while(curr-4<numins)
 	{
 
-
+	//forwarding
 	{
 
-	//rt<-rd
-	//rs<-rd
+		//rt<-rd
+		//rs<-rd
 
-	if ( ex[1].Ins.invalid==0 && (ex[1].Ins.d==2 && id[1].Ins.s==1) && (ex[1].Ins.Rd == id[1].Ins.Rs) ) {id[1].vrs=ex[1].vrd;}
-	if ( ex[1].Ins.invalid==0 && (ex[1].Ins.d==2 && id[1].Ins.t==1)	&& (ex[1].Ins.Rd == id[1].Ins.Rt) ) {id[1].vrt=ex[1].vrd;}
-
-
-	if ( ma[1].Ins.invalid==0 && (ma[1].Ins.d==2 && id[1].Ins.s==1) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rs)) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rs)) && (ma[1].Ins.Rd==id[1].Ins.Rs)) 
-	{id[1].vrs=ma[1].vrd;}
-	
-	if ( ma[1].Ins.invalid==0 && (ma[1].Ins.d==2 && id[1].Ins.t==1) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rt)) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rt)) && (ma[1].Ins.Rd==id[1].Ins.Rt)) 
-	{id[1].vrt=ma[1].vrd;}
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.d==2 && id[1].Ins.s==1) && (ex[1].Ins.Rd == id[1].Ins.Rs) ) {id[1].vrs=ex[1].vrd;}
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.d==2 && id[1].Ins.t==1)	&& (ex[1].Ins.Rd == id[1].Ins.Rt) ) {id[1].vrt=ex[1].vrd;}
 
 
-	//rs<-rt
-	if ( ma[1].Ins.invalid==0 && (ma[1].Ins.t==2 && id[1].Ins.s==1) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rs)) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rs)) && (ma[1].Ins.Rt==id[1].Ins.Rs)) 
-	{id[1].vrs=ma[1].vrt;/*printf("****   %x\n",id[1].vrs);*/}
-	if ( ex[1].Ins.invalid==0 && (ex[1].Ins.t==2 && id[1].Ins.s==1) && (ex[1].Ins.Rt == id[1].Ins.Rs) ) 
-	{id[1].vrs=ex[1].vrt;/*printf("****   %d\n",id[1].vrs);*/}
+		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.d==2 && id[1].Ins.s==1) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rs)) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rs)) && (ma[1].Ins.Rd==id[1].Ins.Rs)) 
+		{id[1].vrs=ma[1].vrd;}
+		
+		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.d==2 && id[1].Ins.t==1) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rt)) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rt)) && (ma[1].Ins.Rd==id[1].Ins.Rt)) 
+		{id[1].vrt=ma[1].vrd;}
 
 
-	//rt<-rt
-	if ( ma[1].Ins.invalid==0 && (ma[1].Ins.t==2 && id[1].Ins.t==1) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rt)) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rt)) && (ma[1].Ins.Rt==id[1].Ins.Rt)) 
-	{id[1].vrt=ma[1].vrt;/*printf("****   %d\n",id[1].vrt);*/}
-	if ( ex[1].Ins.invalid==0 && (ex[1].Ins.t==2 && id[1].Ins.t==1) && (ex[1].Ins.Rt == id[1].Ins.Rt) ) 
-	{id[1].vrt=ex[1].vrt;/*printf("****   %d\n",id[1].vrt);*/}
+		//rs<-rt
+		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.t==2 && id[1].Ins.s==1) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rs)) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rs)) && (ma[1].Ins.Rt==id[1].Ins.Rs)) 
+		{id[1].vrs=ma[1].vrt;/*printf("****   %x\n",id[1].vrs);*/}
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.t==2 && id[1].Ins.s==1) && (ex[1].Ins.Rt == id[1].Ins.Rs) ) 
+		{id[1].vrs=ex[1].vrt;/*printf("****   %d\n",id[1].vrs);*/}
+
+
+		//rt<-rt
+		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.t==2 && id[1].Ins.t==1) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rt)) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rt)) && (ma[1].Ins.Rt==id[1].Ins.Rt)) 
+		{id[1].vrt=ma[1].vrt;/*printf("****   %d\n",id[1].vrt);*/}
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.t==2 && id[1].Ins.t==1) && (ex[1].Ins.Rt == id[1].Ins.Rt) ) 
+		{id[1].vrt=ex[1].vrt;/*printf("****   %d\n",id[1].vrt);*/}
 
 	}
 
-
+	//stalling
 	{
-	if ( ex[1].Ins.invalid==0 && (ex[1].Ins.type==1 || ex[1].Ins.type==13) && ((ex[1].Ins.Rt==id[1].Ins.Rs) || ex[1].Ins.Rt==id[1].Ins.Rt) )
-	{id[1].Ins.stall=1;inf[1].Ins.stall=1;id[1].Ins.invalid=1;ex[0].Ins.invalid=1;--curr;printf("stalled\n");}
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.type==1 || ex[1].Ins.type==13) && ((ex[1].Ins.Rt==id[1].Ins.Rs) || ex[1].Ins.Rt==id[1].Ins.Rt) )
+		{id[1].Ins.stall=1;inf[1].Ins.stall=1;id[1].Ins.invalid=1;ex[0].Ins.invalid=1;--curr;printf("stalled\n");}
 
 	}
 
-
-		++numcycles;
+	++numcycles;
 
 		
-		IF(curr);
+		IF(curr);//thread-1
+
 		pc=base_pc+4*curr;
 		if(curr<=numins)
 		{reg[34]=pc;}
 
 	//	printf(" %d %d %d \n", inf[0].Ins.type , (curr+1) , inf[0].Ins.invalid );
 	
-		//transfer();
-		WB();
-		ID();
-		//transfer();
+		WB();//thread-2//join
+
+		ID();//thread-3
 		//if(id[0].Ins.type==21 && id[0].Ins.invalid==0)
 		//printf("***%d %d\n",id[0].Ins.type,id[0].vrs);
 		
-		EX();
+		EX();//thread-4
 
-
-		//transfer();		
-		MA();
-		//transfer();		
-		
-		transfer();
-
-		printsvg();
+		MA();//thread-5
 	
+		printsvg();
+		
+		transfer();//join
+
+	st=0;
 
 	if(flag==0)
 	{
@@ -467,5 +464,8 @@ void execute2()
 		++curr;
 		
 	}
+
+	printsvg();
+
 
 }

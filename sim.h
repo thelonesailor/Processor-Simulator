@@ -11,7 +11,7 @@
 FILE* hexin;
 FILE* svgout;
 FILE* resout;
-    
+char* svgfile;     
 
 int numins;//number of instructions
 long long int* ins;// ins as ints
@@ -21,7 +21,7 @@ int reg[35];
 char mem[74000005];
 int iacc,dacc,numcycles;
 
-int curr;
+int curr,st;
 
 struct INST{
   int type; 

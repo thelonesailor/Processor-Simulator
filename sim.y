@@ -167,11 +167,13 @@ int main(int argc, char* argv[])
         exit(-1);
         }
 
-        svgout=fopen(argv[2],"w");
-        if (svgout == NULL) {
-        fprintf(stderr,"Error - Output svg file \"%s\" not found\n",argv[2]);
-        exit(-1);
-        }
+        // svgout=fopen(argv[2],"w");
+        // if (svgout == NULL) {
+        // fprintf(stderr,"Error - Output svg file \"%s\" not found\n",argv[2]);
+        // exit(-1);
+        // }
+
+        svgfile=strdup(argv[2]);
 
         printres=0;
     }
@@ -183,11 +185,13 @@ int main(int argc, char* argv[])
         exit(-1);
         }
 
-        svgout=fopen(argv[2],"w");
-        if (svgout == NULL) {
-        fprintf(stderr,"Error - Output svg file \"%s\" not found\n",argv[2]);
-        exit(-1);
-        }
+        // svgout=fopen(argv[2],"w");
+        // if (svgout == NULL) {
+        // fprintf(stderr,"Error - Output svg file \"%s\" not found\n",argv[2]);
+        // exit(-1);
+        // }
+
+        svgfile=strdup(argv[2]);
 
         resout=fopen(argv[3],"w");
         if (resout == NULL) {
@@ -242,16 +246,19 @@ int main(int argc, char* argv[])
 
     //	test_print();	//debug
 
-
     if(printres==1)//output the result file
     {
         print_result();
     }
+    //printf("%d\n",printres);
+
+    
+    fflush(resout);
 
     fclose(hexin);
-    fclose(svgout);
     fclose(resout);
 
+    
     return 0;
 }
 
