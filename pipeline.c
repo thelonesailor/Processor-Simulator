@@ -175,7 +175,7 @@ void EX()
 			curr+=id[1].Ins.Offset;
 			curr-=2;
 			
-			printf("off1=%d\n",id[1].Ins.Offset);
+			//printf("off1=%d\n",id[1].Ins.Offset);
 			
 			if(curr<0)
 			{fprintf(stderr,"Error - Invalid branch instruction\n");}	
@@ -192,7 +192,8 @@ void EX()
 			curr+=id[1].Ins.Offset;
 			curr-=2;
 
-			printf("off2=%d\n",id[1].Ins.Offset);
+			//printf("off2=%d\n",id[1].Ins.Offset);
+			
 			if(curr<0)
 			{fprintf(stderr,"Error - Invalid branch instruction\n");}	
 
@@ -210,7 +211,7 @@ void EX()
 			curr+=id[1].Ins.Offset;
 			curr-=2;
 
-			printf("off3=%d\n",id[1].Ins.Offset);
+			//printf("off3=%d\n",id[1].Ins.Offset);
 			
 			if(curr<0)
 			{fprintf(stderr,"Error - Invalid branch instruction\n");}	
@@ -227,7 +228,7 @@ void EX()
 			curr+=id[1].Ins.Offset;
 			curr-=2;
 
-			printf("off4=%d .vrt=%d\n",id[1].Ins.Offset,id[1].vrt);
+			//printf("off4=%d .vrt=%d\n",id[1].Ins.Offset,id[1].vrt);
 			
 			if(curr<0)
 			{fprintf(stderr,"Error - Invalid branch instruction\n");}	
@@ -244,7 +245,8 @@ void EX()
 			curr+=id[1].Ins.Offset;
 			curr-=2;
 
-			printf("off5=%d\n",id[1].Ins.Offset);
+			//printf("off5=%d\n",id[1].Ins.Offset);
+			
 			if(curr<0)
 			{fprintf(stderr,"Error - Invalid branch instruction\n");}	
 		
@@ -361,7 +363,6 @@ void transfer()
 	id[1]=id[0];
 	ex[1]=ex[0];
 	ma[1]=ma[0];
-
 	
 }
 
@@ -429,9 +430,8 @@ void execute2()
 		if(curr<=numins)
 		{reg[34]=pc;}
 
-//	printf(" %d %d %d \n", inf[0].Ins.type , (curr+1) , inf[0].Ins.invalid );
-//	fflush(stdout);
-
+	//	printf(" %d %d %d \n", inf[0].Ins.type , (curr+1) , inf[0].Ins.invalid );
+	
 		//transfer();
 		WB();
 		ID();
