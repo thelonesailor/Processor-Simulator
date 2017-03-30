@@ -18,7 +18,7 @@ hex [0-9A-F]+
 <INITIAL>"gotoend"		 {  /*printf("Intial = \"%s\"\n",yytext);*/BEGIN EXPECTINGEND; return GOTOEND;}
 <INITIAL>"step"		 {  /*printf("Intial = \"%s\"\n",yytext);*/BEGIN EXPECTINGEND;/*printf("2\n");*/ return STEP;}
 <INITIAL>("quit"|"QUIT"|"exit"|"EXIT")	{  /*printf("Intial = \"%s\"\n",yytext);*/BEGIN EXPECTINGEND;/*printf("2\n");*/ return QUIT;}
-<TEMP>("0x"|"0X")  { printf("Consumed - \"%s\"\n",yytext);BEGIN TERMINAL1; }
+<TEMP>("0x"|"0X")  { /*printf("Consumed - \"%s\"\n",yytext);*/BEGIN TERMINAL1; }
 <TEMP>[0-9]+	  { yylval.addr=atoi(yytext); printf("TEMP = \"%s\"\n",yytext);BEGIN valuetemp;/*printf("4\n");*/ return ADDR;}
 
 <TERMINAL1>[0-9A-Fa-f]+	  { yylval.addr=(int)strtol(yytext, NULL, 16); printf("T1 = \"%s\"\n",yytext);BEGIN valuetemp;/*printf("4\n");*/ return ADDR;}

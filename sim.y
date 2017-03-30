@@ -76,7 +76,7 @@ void print_memdump(int addr,int num)
     {
         int i=0;
         for(i=0;i<num;++i)
-        {printf("0x%08x: 0x%02x\n",addr+i,mem[addr-0x10010001+i]);}
+        {printf("0x%08x: 0x%02x\n",addr+i,mem[addr-0x10010000+i]);}
     }
 }
 
@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
 
     //test();
 
-    /*if(argc == 3)
+    if(argc == 3)
     {
         hexin=fopen(argv[1],"r");
         if (hexin == NULL) {
@@ -202,8 +202,8 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Error - 3 or 4 arguments required! Now %d arguments given\n",argc);
         exit(-1);
     }
-    */
-    hexin=fopen("in6.hex","r");
+    
+    /*hexin=fopen("in6.hex","r");
     if (hexin == NULL) {
     fprintf(stderr,"Error - Input hex file \"%s\" not found\n","");
     exit(-1);
@@ -218,7 +218,7 @@ int main(int argc, char* argv[])
     if (resout == NULL) {
     fprintf(stderr,"Error - Output result file \"%s\" not found\n","");
     exit(-1);
-    }
+    }*/
 
     yyin = stdin;
     if (yyin == NULL) {
@@ -229,8 +229,9 @@ int main(int argc, char* argv[])
 
 //    printf("sim\n");
     simulate();
-
-
+    
+    printf("Shell>>");
+    yyparse();
     //change to keep parsing multiple times because we just want to ignore the wrong line
     /*do {
         int temp=yyparse();

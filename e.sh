@@ -1,5 +1,5 @@
 #!/bin/bash
-for i in {1..6};
+for i in {6..1};
 do
 	echo "Test case $i";
 	./processor_simulator Testcases/testcase$i/in$i.hex test$i.svg results$i.txt 

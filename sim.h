@@ -18,7 +18,7 @@ long long int* ins;// ins as ints
 char** ins_string;// ins as bit strings
 
 int reg[35];
-char mem[64000005];
+char mem[74000005];
 int iacc,dacc,numcycles;
 
 int curr;

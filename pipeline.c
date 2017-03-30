@@ -179,6 +179,10 @@ void EX()
 			
 			if(curr<0)
 			{fprintf(stderr,"Error - Invalid branch instruction\n");}	
+
+			inf[0].Ins.invalid=1;
+			inf[1].Ins.invalid=1;
+			id[0].Ins.invalid=1;
 		}	
 	}
 	else if(type==20)
@@ -293,6 +297,7 @@ void MA()
 		char ch1=t%256;t/=256;
 
 		long long int address=ex[1].address;
+		//printf("addr=0x%08llx\n", address);
 		mem[address+0-0x10010000]=ch1;
 		mem[address+1-0x10010000]=ch2;
 		mem[address+2-0x10010000]=ch3;
