@@ -19,9 +19,10 @@ char** ins_string;// ins as bit strings
 
 int reg[35];
 char mem[74000005];
-int iacc,dacc,numcycles;
+int iacc,dacc,numcycles,icache;
 
 int curr,st;
+int p11,p12,p21,p22,p3;
 
 struct INST{
   int type; 
@@ -65,6 +66,10 @@ struct ID id[2];
 struct EX ex[2];
 struct MA ma[2];
 
+//nothing for type=0
+//type=[1..23]
+//char * operaons[24]={"","lw","sw","add","sub","addi","and","or","ori","lui","mult","madd","nor","lb","sb","sllv","sltu","slti","sll","beq","bgez","bgtz","blez","bltz"};
+
 
 void yyerror(char* );
 void print_regdump();
@@ -78,6 +83,9 @@ void llinttobinary(long long int a,int num);
 
 int yyparse();
 
+
+void stalling();
+void forwarding();
 void step();
 void printsvg();
 void simulate();

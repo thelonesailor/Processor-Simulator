@@ -32,7 +32,7 @@ Expression:
 | GOTOEND END               {return 150;}
 ;
 
-| REGDUMP er {/*printf("Got and error\n");*/}
+| REGDUMP er {}
 | MEMDUMP ADDR NUM er {}
 | MEMDUMP ADDR er {}
 | MEMDUMP er {}
@@ -44,15 +44,25 @@ Expression:
 
 void initialise()
 {
-    iacc=dacc=numins=numcycles=0;
+    iacc=dacc=numins=numcycles=icache=0;
     
     int i=0;
     for(i=0;i<34;++i)
     {reg[i]=0;}
     reg[34]=0x00400000;//pc=0x00400000
 
-    for(i=0;i<64000005;++i)
+    for(i=0;i<74000005;++i)
     {mem[i]=0;}
+    
+    inf[0].Ins.type=0;
+    inf[1].Ins.type=0;    
+    id[0].Ins.type=0;
+    id[1].Ins.type=0;
+    ex[0].Ins.type=0;
+    ex[1].Ins.type=0;    
+    ma[0].Ins.type=0;
+    ma[1].Ins.type=0;
+
 }
 
 void print_regdump()
@@ -133,6 +143,9 @@ void input_hexin()
 
     ++x;
     }
+
+    fclose(hexin);
+
 }
 
 void test_hexin()
@@ -231,32 +244,32 @@ int main(int argc, char* argv[])
     }
 
 
-//    printf("sim\n");
+   //printf("sim\n");
     simulate();
     
-    printf("Shell>>");
-    yyparse();
     //change to keep parsing multiple times because we just want to ignore the wrong line
-    /*do {
+    do {
+        printf("Shell>>");
         int temp=yyparse();
         if(temp==100)
         {break;}
+        else if(temp==50)
+        {break;}
     } while (!feof(yyin));
-    */
+    
 
     //	test_print();	//debug
 
     if(printres==1)//output the result file
     {
         print_result();
+        fflush(resout);
+        fclose(resout);
     }
     //printf("%d\n",printres);
 
     
-    fflush(resout);
 
-    fclose(hexin);
-    fclose(resout);
 
     
     return 0;
@@ -279,7 +292,7 @@ void print_result()//-------------TODO
 
     fprintf(resout,"Cache Summary\n");
     fprintf(resout,"Cache L1-I\n");
-    fprintf(resout,"num cache accesses,%d\n",iacc);
+    fprintf(resout,"num cache accesses,%d\n",icache-4);
     fprintf(resout,"Cache L1-D\n");
     fprintf(resout,"num cache accesses,%d\n",dacc);
 }

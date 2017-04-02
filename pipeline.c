@@ -1,27 +1,41 @@
 #include "sim.h"
+#include <pthread.h>
 
 const int base_pc=0x00400000;
 
+pthread_mutex_t syn;
 
-void IF(int insnum)
+void IF(int insnum)//curr,numins
 {
-
+	pthread_mutex_lock(&syn);
+		
 	if(inf[1].Ins.stall==0)
 	{
 
 	inf[0].Ins=decoded[insnum];
 
+	//pthread_mutex_lock(&syn);
+		
+		++icache;
+
 	if(curr>=numins)
 	{inf[0].Ins.invalid=1;}
-
+	
+	//pthread_mutex_unlock(&syn);
+	
 	//if(ma[1].Ins.invalid==0)//notinvalid
 	//{printf("   in type=%d\n",inf[0].Ins.type);}
 	}
+
+	pthread_mutex_unlock(&syn);
 
 }
 
 void ID()
 {
+
+	pthread_mutex_lock(&syn);	
+	
 
 	if(id[1].Ins.stall==0)
 	{
@@ -55,6 +69,8 @@ void ID()
 	//printf("ID: Rs=%d vrs=%d s=%d\n",id[0].Ins.Rs,id[0].vrs,id[0].Ins.s);
 	}
 
+	pthread_mutex_unlock(&syn);
+
 }
 
 void EX()
@@ -66,6 +82,7 @@ void EX()
 	ex[0].Ins=id[1].Ins;
 
 	int type=id[1].Ins.type;
+	//pthread_mutex_lock(&syn);
 
 	//	if(type==2)
 	//	{printf("id[1].vrs=%d\n",id[1].vrs);}
@@ -257,12 +274,15 @@ void EX()
 	}
 	else//NO ALU work, just pass forward
 	{}
+	//pthread_mutex_unlock(&syn);
 
 	}	
 }
 
 void MA()
 {
+	pthread_mutex_lock(&syn);	
+
 	ma[0].vrs=ex[1].vrs;
 	ma[0].vrt=ex[1].vrt;
 	ma[0].vrd=ex[1].vrd;
@@ -330,10 +350,15 @@ void MA()
 	{}
 	
 	}
+
+	pthread_mutex_unlock(&syn);
+
 }
 
 void WB()
 {
+	pthread_mutex_lock(&syn);
+
 	//printf("%d\n",ma[1].vrd);
 	if(ma[1].Ins.invalid==0)//notinvalid
 	{
@@ -350,6 +375,9 @@ void WB()
 	//printf("Rd=%d vrd=%d d=%d\n",ma[1].Ins.Rd,ma[1].vrd,ma[1].Ins.d);
 	}
 	//printf("%d %d %d\n",ma[1].vrs,ma[1].vrt,ma[1].vrd);
+
+	pthread_mutex_unlock(&syn);
+
 }
 
 void transfer()
@@ -364,10 +392,41 @@ void transfer()
 	
 }
 
+
+int d[6];
+
+void *IF_()
+{
+	IF(curr);	
+}
+
+void *ID_()
+{
+	ID();	
+}
+
+void *EX_()
+{
+	pthread_mutex_lock(&syn);	
+	EX();	
+	pthread_mutex_unlock(&syn);
+}
+
+void *MA_()
+{
+	MA();	
+}
+
+void *WB_()
+{
+	WB();	
+}
+
 void execute2()
 {
+
 	int pc,flag=0;
-	st=0;
+	//st=0;
 	curr=0;
 
 	inf[0].Ins.invalid=1;	
@@ -382,71 +441,69 @@ void execute2()
 	while(curr-4<numins)
 	{
 
-	//forwarding
-	{
-
-		//rt<-rd
-		//rs<-rd
-
-		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.d==2 && id[1].Ins.s==1) && (ex[1].Ins.Rd == id[1].Ins.Rs) ) {id[1].vrs=ex[1].vrd;}
-		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.d==2 && id[1].Ins.t==1)	&& (ex[1].Ins.Rd == id[1].Ins.Rt) ) {id[1].vrt=ex[1].vrd;}
-
-
-		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.d==2 && id[1].Ins.s==1) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rs)) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rs)) && (ma[1].Ins.Rd==id[1].Ins.Rs)) 
-		{id[1].vrs=ma[1].vrd;}
-		
-		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.d==2 && id[1].Ins.t==1) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rt)) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rt)) && (ma[1].Ins.Rd==id[1].Ins.Rt)) 
-		{id[1].vrt=ma[1].vrd;}
-
-
-		//rs<-rt
-		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.t==2 && id[1].Ins.s==1) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rs)) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rs)) && (ma[1].Ins.Rt==id[1].Ins.Rs)) 
-		{id[1].vrs=ma[1].vrt;/*printf("****   %x\n",id[1].vrs);*/}
-		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.t==2 && id[1].Ins.s==1) && (ex[1].Ins.Rt == id[1].Ins.Rs) ) 
-		{id[1].vrs=ex[1].vrt;/*printf("****   %d\n",id[1].vrs);*/}
-
-
-		//rt<-rt
-		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.t==2 && id[1].Ins.t==1) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rt)) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rt)) && (ma[1].Ins.Rt==id[1].Ins.Rt)) 
-		{id[1].vrt=ma[1].vrt;/*printf("****   %d\n",id[1].vrt);*/}
-		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.t==2 && id[1].Ins.t==1) && (ex[1].Ins.Rt == id[1].Ins.Rt) ) 
-		{id[1].vrt=ex[1].vrt;/*printf("****   %d\n",id[1].vrt);*/}
-
-	}
-
-	//stalling
-	{
-		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.type==1 || ex[1].Ins.type==13) && ((ex[1].Ins.Rt==id[1].Ins.Rs) || ex[1].Ins.Rt==id[1].Ins.Rt) )
-		{id[1].Ins.stall=1;inf[1].Ins.stall=1;id[1].Ins.invalid=1;ex[0].Ins.invalid=1;--curr;printf("stalled\n");}
-
-	}
+	forwarding();
+	stalling();
+			
 
 	++numcycles;
 
-		
-		IF(curr);//thread-1
-
+//start
+	pthread_t threads[6];
+	pthread_mutex_init(&syn,NULL);//---------check!!
+	
 		pc=base_pc+4*curr;
 		if(curr<=numins)
 		{reg[34]=pc;}
-
-	//	printf(" %d %d %d \n", inf[0].Ins.type , (curr+1) , inf[0].Ins.invalid );
 	
-		WB();//thread-2//join
 
-		ID();//thread-3
-		//if(id[0].Ins.type==21 && id[0].Ins.invalid==0)
-		//printf("***%d %d\n",id[0].Ins.type,id[0].vrs);
+	pthread_create(&threads[1], NULL, IF_, NULL);
+
+	pthread_create(&threads[5], NULL, WB_, NULL);
+	pthread_join(threads[5], NULL);
+	pthread_join(threads[1], NULL);
+
+	pthread_create(&threads[2], NULL, ID_, NULL);
+	pthread_create(&threads[3], NULL, EX_, NULL);
+	pthread_create(&threads[4], NULL, MA_, NULL);
+
+	pthread_join(threads[1], NULL);
+	pthread_join(threads[2], NULL);
+	pthread_join(threads[3], NULL);
+	pthread_join(threads[4], NULL);
+	
+
+	
+	pthread_mutex_destroy(&syn);
+
+//till here
+
+//threading this
+
+	// 	IF(curr);//thread-1
+
+	// 	pc=base_pc+4*curr;
+	// 	if(curr<=numins)
+	// 	{reg[34]=pc;}
+
+	// //	printf(" %d %d %d \n", inf[0].Ins.type , (curr+1) , inf[0].Ins.invalid );
+	
+	// 	WB();//thread-2//join
+
+	// 	ID();//thread-3
+	// 	//if(id[0].Ins.type==21 && id[0].Ins.invalid==0)
+	// 	//printf("***%d %d\n",id[0].Ins.type,id[0].vrs);
 		
-		EX();//thread-4
+	// 	EX();//thread-4
 
-		MA();//thread-5
-	
+	// 	MA();//thread-5
+
+//till here
+
 		printsvg();
 		
 		transfer();//join
 
-	st=0;
+	//st=0;
 
 	if(flag==0)
 	{
@@ -469,3 +526,49 @@ void execute2()
 
 
 }
+
+	//forwarding
+	void forwarding()
+	{
+
+		//rt<-rd
+		//rs<-rd
+
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.d==2 && id[1].Ins.s==1) && (ex[1].Ins.Rd == id[1].Ins.Rs) ) {id[1].vrs=ex[1].vrd;p11=1;}
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.d==2 && id[1].Ins.t==1)	&& (ex[1].Ins.Rd == id[1].Ins.Rt) ) {id[1].vrt=ex[1].vrd;p12=2;}
+
+
+		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.d==2 && id[1].Ins.s==1) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rs)) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rs)) && (ma[1].Ins.Rd==id[1].Ins.Rs)) 
+		{id[1].vrs=ma[1].vrd;p21=1;}
+		
+		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.d==2 && id[1].Ins.t==1) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rt)) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rt)) && (ma[1].Ins.Rd==id[1].Ins.Rt)) 
+		{id[1].vrt=ma[1].vrd;p22=1;}
+
+
+		//rs<-rt
+		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.t==2 && id[1].Ins.s==1) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rs)) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rs)) && (ma[1].Ins.Rt==id[1].Ins.Rs)) 
+		{id[1].vrs=ma[1].vrt;p21=1;/*printf("****   %x\n",id[1].vrs);*/}
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.t==2 && id[1].Ins.s==1) && (ex[1].Ins.Rt == id[1].Ins.Rs) ) 
+		{id[1].vrs=ex[1].vrt;p11=1;/*printf("****   %d\n",id[1].vrs);*/}
+
+
+		//rt<-rt
+		if ( ma[1].Ins.invalid==0 && (ma[1].Ins.t==2 && id[1].Ins.t==1) && !( ex[1].Ins.t==2 && (ex[1].Ins.Rt == id[1].Ins.Rt)) && !( ex[1].Ins.d==2 && (ex[1].Ins.Rd == id[1].Ins.Rt)) && (ma[1].Ins.Rt==id[1].Ins.Rt)) 
+		{id[1].vrt=ma[1].vrt;p22=1;/*printf("****   %d\n",id[1].vrt);*/}
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.t==2 && id[1].Ins.t==1) && (ex[1].Ins.Rt == id[1].Ins.Rt) ) 
+		{id[1].vrt=ex[1].vrt;p12=1;/*printf("****   %d\n",id[1].vrt);*/}
+
+		if ( ma[1].Ins.invalid==0 && (ex[1].Ins.type==2||ex[1].Ins.type==14) && (ma[1].Ins.type==1||ma[1].Ins.type==13) && (ma[1].Ins.t==2 && ex[1].Ins.t==1) && (ma[1].Ins.Rt == ex[1].Ins.Rt) ) 
+		{id[1].vrt=ex[1].vrt;p3=1;/*printf("****   %d\n",id[1].vrt);*/}
+
+
+
+	}
+
+	//stalling
+	void stalling()
+	{
+		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.type==1 || ex[1].Ins.type==13) && ((ex[1].Ins.Rt==id[1].Ins.Rs) || ex[1].Ins.Rt==id[1].Ins.Rt) )
+		{id[1].Ins.stall=1;inf[1].Ins.stall=1;id[1].Ins.invalid=1;ex[0].Ins.invalid=1;--curr;printf("stalled\n");}
+
+	}

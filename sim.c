@@ -257,7 +257,7 @@ void decode(char * str,int i)
 
 
 	if(type==-1)
-	{printf("Error - unable to decode instruction no.%d\n",i+1);}
+	{printf("Error - Unable to decode instruction no.%d\n",i+1);}
 
 	decoded[i].type=type;
 	
