@@ -36,28 +36,132 @@ void printsvg(){
 	else color4="orange";
 	char *type1,*type2,*type3,*type4,*type5,*thr1,*thr2,*thr3,*thr4,*thr5,*thr6;
 	
+
+	// if(curr>=numins)
+ // 		thr1=" ";
+ //    else thr1="Inst Memory";
+	
+	// if(inf[1].Ins.invalid==1)
+	// 	thr2="	";
+ //    else thr2="Register File";
+	
+	// if(id[1].Ins.invalid==1)
+	// 	thr3="  ";
+ //    else thr3="ALU";
+	
+	// if(ex[1].Ins.invalid==1)
+	// 	thr4="  ";
+ //    else thr4="Data Memory";
+	
+	// if(ma[1].Ins.invalid==1)
+	// 	thr5="  ";
+ //    else thr5="Write Back";
+
+	
+//	from here
     if(curr>=numins)
  		thr1=" ";
-    else thr1="Inst Memory";
+    else {
+
+	if(core_id[1]==0)
+   	thr1="IM  core 0";
+	else if(core_id[1]==1)
+   	thr1="IM  core 1";
+	else if(core_id[1]==2)
+   	thr1="IM  core 2";
+	else if(core_id[1]==3)
+   	thr1="IM  core 3";
+	else if(core_id[1]==4)
+   	thr1="IM  core 4";
+
+
+}
 	
 	if(inf[1].Ins.invalid==1)
 		thr2="	";
-    else thr2="Register File";
+    else {
+
+	if(core_id[2]==0)
+   	thr2="RF  core 0";
+	else if(core_id[2]==1)
+   	thr2="RF  core 1";
+	else if(core_id[2]==2)
+   	thr2="RF  core 2";
+	else if(core_id[2]==3)
+   	thr2="RF  core 3";
+	else if(core_id[2]==4)
+   	thr2="RF  core 4";
+
+   }
 	
 	if(id[1].Ins.invalid==1)
 		thr3="  ";
-    else thr3="ALU";
+    else {
+
+
+	if(core_id[3]==0)
+   	thr3="ALU core 0";
+	else if(core_id[3]==1)
+   	thr3="ALU core 1";
+	else if(core_id[3]==2)
+   	thr3="ALU core 2";
+	else if(core_id[3]==3)
+   	thr3="ALU core 3";
+	else if(core_id[3]==4)
+   	thr3="ALU core 4";
+
+}
 	
 	if(ex[1].Ins.invalid==1)
 		thr4="  ";
-    else thr4="Data Memory";
+    else {
+
+	if(core_id[4]==0)
+   	thr4="DM  core 0";
+	else if(core_id[4]==1)
+   	thr4="DM  core 1";
+	else if(core_id[4]==2)
+   	thr4="DM  core 2";
+	else if(core_id[4]==3)
+   	thr4="DM  core 3";
+	else if(core_id[4]==4)
+   	thr4="DM  core 4";
+
+
+}
 	
 	if(ma[1].Ins.invalid==1)
 		thr5="  ";
-    else thr5="Write Back";
+    else {
 
-	thr6="Print SVG";
+	if(core_id[5]==0)
+   	thr5="WB  core 0";
+	else if(core_id[5]==1)
+   	thr5="WB  core 1";
+	else if(core_id[5]==2)
+   	thr5="WB  core 2";
+	else if(core_id[5]==3)
+   	thr5="WB  core 3";
+	else if(core_id[5]==4)
+   	thr5="WB  core 4";
+
+}
+
+//till here
 	
+	core_id[6]=sched_getcpu();;
+
+	if(core_id[6]==0)
+   	thr6="Print svg  core 0";
+	else if(core_id[6]==1)
+   	thr6="Print svg  core 1";
+	else if(core_id[6]==2)
+   	thr6="Print svg  core 2";
+	else if(core_id[6]==3)
+   	thr6="Print svg  core 3";
+	else if(core_id[6]==4)
+   	thr6="Print svg  core 4";
+
 	memA="red   ";
 	int t=id[1].Ins.type,t2=ex[1].Ins.type,t3=ma[1].Ins.type,t1=inf[1].Ins.type;
 	int ins1=inf[0].Ins.id,ins2=inf[1].Ins.id,ins3=id[1].Ins.id,ins4=ex[1].Ins.id,ins5=ma[1].Ins.id;

@@ -269,8 +269,6 @@ int main(int argc, char* argv[])
     //printf("%d\n",printres);
 
     
-
-
     
     return 0;
 }
@@ -284,10 +282,25 @@ void print_result()//-------------TODO
     fprintf(resout,"IPC,%.04lf\n",ipc);
 
     double Time=numcycles*0.5;
-    fprintf(resout,"Time (ns),%.04lf\n",Time);
+    int time=Time;
+
+
+    if(time==Time)
+    fprintf(resout,"Time (ns),%d\n",time);
+    else
+    fprintf(resout,"Time (ns),%.04lf\n",Time);//
+
     
     double Idle_time=(numcycles-iacc)*0.5;
-    fprintf(resout,"Idle time (ns),%.4lf\n",Idle_time);
+    int idle_time=Idle_time;
+    
+
+    if(idle_time==Idle_time)
+    fprintf(resout,"Idle time (ns),%d\n",idle_time);
+    else
+    fprintf(resout,"Idle time (ns),%.4lf\n",Idle_time);//
+
+
     fprintf(resout,"Idle time (%%),%.04lf%%\n",(Idle_time/Time)*100.0);
 
     fprintf(resout,"Cache Summary\n");

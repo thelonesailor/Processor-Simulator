@@ -10,8 +10,8 @@ sw $t7, 4($10) 		#  B = 0x00020000
 
 lw $4, 0($10)		#  read A from memory into register $4
 lw $5, 4($10)		#  read B from memory into register $5 (A address+4)
-sub $12, $4, $5 	#  subtract A from B => B-A into register $12
-bgez   $12,end		#  branch if B-A is positive to ‘sw' instruction
-sub    $12, $5, $4 	#  subtract B from A => A-B into register $12
+sub $12, $4, $5 	#  subtract B from A => A-B into register $12
+bgez   $12,end		#  branch if A-B is positive to 'sw' instruction
+sub    $12, $5, $4 	#  subtract A from B => B-A into register $12
 end:
 sw $12, 8($10) 		#  store register $12 value, |A-B|, into memory

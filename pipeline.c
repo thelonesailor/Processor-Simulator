@@ -357,7 +357,7 @@ void MA()
 
 void WB()
 {
-	pthread_mutex_lock(&syn);
+	//pthread_mutex_lock(&syn);
 
 	//printf("%d\n",ma[1].vrd);
 	if(ma[1].Ins.invalid==0)//notinvalid
@@ -376,7 +376,7 @@ void WB()
 	}
 	//printf("%d %d %d\n",ma[1].vrs,ma[1].vrt,ma[1].vrd);
 
-	pthread_mutex_unlock(&syn);
+	//pthread_mutex_unlock(&syn);
 
 }
 
@@ -397,16 +397,19 @@ int d[6];
 
 void *IF_()
 {
+	core_id[1]=sched_getcpu();
 	IF(curr);	
 }
 
 void *ID_()
 {
+	core_id[2]=sched_getcpu();
 	ID();	
 }
 
 void *EX_()
 {
+	core_id[3]=sched_getcpu();
 	pthread_mutex_lock(&syn);	
 	EX();	
 	pthread_mutex_unlock(&syn);
@@ -414,16 +417,22 @@ void *EX_()
 
 void *MA_()
 {
+	core_id[4]=sched_getcpu();
 	MA();	
 }
 
 void *WB_()
 {
+	core_id[5]=sched_getcpu();
 	WB();	
 }
 
 void execute2()
 {
+
+   cores=get_nprocs();
+   printf ("There are %d cores.\n", get_nprocs ());
+
 
 	int pc,flag=0;
 	//st=0;
@@ -460,9 +469,10 @@ void execute2()
 
 	pthread_create(&threads[5], NULL, WB_, NULL);
 	pthread_join(threads[5], NULL);
+	
+	pthread_create(&threads[2], NULL, ID_, NULL);
 	pthread_join(threads[1], NULL);
 
-	pthread_create(&threads[2], NULL, ID_, NULL);
 	pthread_create(&threads[3], NULL, EX_, NULL);
 	pthread_create(&threads[4], NULL, MA_, NULL);
 
@@ -471,7 +481,10 @@ void execute2()
 	pthread_join(threads[3], NULL);
 	pthread_join(threads[4], NULL);
 	
-
+	// int i;
+	// for(i=1;i<6;++i)
+	// {printf("%d  ",core_id[i]);}
+	// printf("\n");
 	
 	pthread_mutex_destroy(&syn);
 

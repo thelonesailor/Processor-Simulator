@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <sys/sysinfo.h>
+#include <sched.h>
 
 FILE* hexin;
 FILE* svgout;
@@ -23,6 +25,9 @@ int iacc,dacc,numcycles,icache;
 
 int curr,st;
 int p11,p12,p21,p22,p3;
+int cores;
+int core_id[6];
+  
 
 struct INST{
   int type; 
