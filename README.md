@@ -13,5 +13,5 @@
 
 #---------Assumptions----------#
 1) 'b' and 'B' in Hexadecimal are same.
-2) 
+2) If branch is last instruction then 2 instruction penalty is counted if branch is takens.
 3) 
