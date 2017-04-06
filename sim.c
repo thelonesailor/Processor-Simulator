@@ -1,8 +1,16 @@
 #include "sim.h"
 
 
-
 int btoi(char *a,int num)//wrong
+{
+	int res=0,i=0;
+	for(i=0;i<num;++i)
+	{res=2*res + (a[i]-'0');}
+	
+	return res;
+}
+
+int btoi2(char *a,int num)//wrong
 {
 	if(a[0]=='0')
 	{
@@ -61,7 +69,7 @@ void decode(char * str,int i)
 		rs=btoi(subst(str,6,5),5);		s=1;	
 		rt=btoi(subst(str,11,5),5);		t=2;
 
-		offset=btoi(subst(str,16,16),16);
+		offset=btoi2(subst(str,16,16),16);
 	}
 	else if (strcmp(subst(str,0,6),"101011")==0)	//0x2b------st rt,address
 	{
@@ -70,7 +78,7 @@ void decode(char * str,int i)
 		rs=btoi(subst(str,6,5),5);		s=1;
 		rt=btoi(subst(str,11,5),5);		t=1;
 		
-		offset=btoi(subst(str,16,16),16);
+		offset=btoi2(subst(str,16,16),16);
 	}
 	else if (strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,21,5),"00000")==0 && strcmp(subst(str,26,6),"100000")==0)	//0x00------add rd,rs,rt
 	{
@@ -97,7 +105,7 @@ void decode(char * str,int i)
 	rs=btoi(subst(str,6,5),5);			s=1;
 	rt=btoi(subst(str,11,5),5);			t=2;
 
-	offset=btoi(subst(str,16,16),16);
+	offset=btoi2(subst(str,16,16),16);
 	}
 	else if(strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,21,5),"00000")==0 && strcmp(subst(str,26,6),"100100")==0)//and 
 	{
@@ -124,7 +132,7 @@ void decode(char * str,int i)
 	rs=btoi(subst(str,6,5),5);			s=1;
 	rt=btoi(subst(str,11,5),5);			t=2;
 
-	offset=btoi(subst(str,16,16),16);
+	offset=btoi2(subst(str,16,16),16);
 	}
 	else if (strcmp(subst(str,0,6),"001111")==0 && strcmp(subst(str,6,5),"00000")==0)	//------lui rt,imm
 	{
@@ -132,7 +140,7 @@ void decode(char * str,int i)
 
 	rt=btoi(subst(str,11,5),5);			t=2;
 
-	offset=btoi(subst(str,16,16),16);
+	offset=btoi2(subst(str,16,16),16);
 	}
 	else if (strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,16,10),"0000000000")==0 && strcmp(subst(str,26,6),"011000")==0)	//------mult rs,rt
 	{
@@ -166,7 +174,7 @@ void decode(char * str,int i)
 		rs=btoi(subst(str,6,5),5);		s=1;	
 		rt=btoi(subst(str,11,5),5);		t=2;
 
-		offset=btoi(subst(str,16,16),16);
+		offset=btoi2(subst(str,16,16),16);
 	}
 	else if (strcmp(subst(str,0,6),"101000")==0)	//0x28------sb rt,address
 	{
@@ -175,7 +183,7 @@ void decode(char * str,int i)
 		rs=btoi(subst(str,6,5),5);		s=1;
 		rt=btoi(subst(str,11,5),5);		t=1;
 		
-		offset=btoi(subst(str,16,16),16);
+		offset=btoi2(subst(str,16,16),16);
 	}
 	else if(strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,21,5),"00000")==0 && strcmp(subst(str,26,6),"000100")==0) //--sllv rd, rt, rs
 	{
@@ -202,7 +210,7 @@ void decode(char * str,int i)
 		rs=btoi(subst(str,6,5),5);			s=1;
 		rt=btoi(subst(str,11,5),5);			t=2;
 		
-		offset=btoi(subst(str,16,16),16);		
+		offset=btoi2(subst(str,16,16),16);		
 	}
 	else if(strcmp(subst(str,0,6),"000000")==0 && strcmp(subst(str,26,6),"000000")==0) //--sll rd, rt, shamt
 	{
@@ -211,7 +219,7 @@ void decode(char * str,int i)
 		rt=btoi(subst(str,11,5),5);			t=1;
 		rd=btoi(subst(str,16,5),5);			d=2;
 	
-		offset=btoi(subst(str,21,5),5);				
+		offset=btoi2(subst(str,21,5),5);				
 	}
 	else if(strcmp(subst(str,0,6),"000100")==0) //--beq rs, rt, label
 	{
@@ -220,7 +228,7 @@ void decode(char * str,int i)
 		rs=btoi(subst(str,6,5),5);			s=1;
 		rt=btoi(subst(str,11,5),5);			t=1;
 		
-		offset=btoi(subst(str,16,16),16);		
+		offset=btoi2(subst(str,16,16),16);		
 	}
 	else if(strcmp(subst(str,0,6),"000001")==0 && strcmp(subst(str,11,5),"00001")==0) //--bgez rs, label
 	{
@@ -228,7 +236,7 @@ void decode(char * str,int i)
 
 		rs=btoi(subst(str,6,5),5);			s=1;
 		
-		offset=btoi(subst(str,16,16),16);		
+		offset=btoi2(subst(str,16,16),16);		
 	}
 	else if(strcmp(subst(str,0,6),"000111")==0 && strcmp(subst(str,11,5),"00000")==0) //--bgtz rs, labels
 	{
@@ -236,7 +244,7 @@ void decode(char * str,int i)
 
 		rs=btoi(subst(str,6,5),5);			s=1;
 		
-		offset=btoi(subst(str,16,16),16);		
+		offset=btoi2(subst(str,16,16),16);		
 	}
 	else if(strcmp(subst(str,0,6),"000110")==0 && strcmp(subst(str,11,5),"00000")==0) //--blez rs, label
 	{
@@ -244,7 +252,7 @@ void decode(char * str,int i)
 
 		rs=btoi(subst(str,6,5),5);			s=1;
 		
-		offset=btoi(subst(str,16,16),16);		
+		offset=btoi2(subst(str,16,16),16);		
 	}
 	else if(strcmp(subst(str,0,6),"000001")==0 && strcmp(subst(str,11,5),"00000")==0) //--bltz rs, label
 	{
@@ -252,7 +260,7 @@ void decode(char * str,int i)
 
 		rs=btoi(subst(str,6,5),5);			s=1;
 		
-		offset=btoi(subst(str,16,16),16);		
+		offset=btoi2(subst(str,16,16),16);		
 	}
 
 

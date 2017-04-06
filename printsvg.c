@@ -7,13 +7,9 @@ void printsvg(){
 	char *color1,*color4,*color3,*color2,*color0,*alu11,*alu10,*alu01,*alu00,*alub2,*alub0,*alub1,*memA,*memD,*toMem,*memOut;
 	char *wba,*wbd,*wbMem,*wbOut,*addrA,*addrB,*immin,*regA,*regB,*boffset,*pcOut,*imOut,*wb1,*wb2,*wb3,*pcIn,*pcp1,*pc1;
 
-    svgout=fopen(svgfile,"w");
-    if (svgout == NULL) {
-    fprintf(stderr,"Error - Output svg file \"%s\" not found\n",svgfile);
-    exit(-1);
-    }
 
 
+    //printf("%d\n",svgout);
 	
     if(curr>=numins)
  		color0="white";
@@ -100,15 +96,15 @@ void printsvg(){
 
 
 	if(core_id[3]==0)
-   	thr3="ALU core 0";
+   	thr3="  ALU core 0";
 	else if(core_id[3]==1)
-   	thr3="ALU core 1";
+   	thr3="  ALU core 1";
 	else if(core_id[3]==2)
-   	thr3="ALU core 2";
+   	thr3="  ALU core 2";
 	else if(core_id[3]==3)
-   	thr3="ALU core 3";
+   	thr3="  ALU core 3";
 	else if(core_id[3]==4)
-   	thr3="ALU core 4";
+   	thr3="  ALU core 4";
 
 }
 	
@@ -117,15 +113,15 @@ void printsvg(){
     else {
 
 	if(core_id[4]==0)
-   	thr4="DM  core 0";
+   	thr4=" DM  core 0";
 	else if(core_id[4]==1)
-   	thr4="DM  core 1";
+   	thr4=" DM  core 1";
 	else if(core_id[4]==2)
-   	thr4="DM  core 2";
+   	thr4=" DM  core 2";
 	else if(core_id[4]==3)
-   	thr4="DM  core 3";
+   	thr4=" DM  core 3";
 	else if(core_id[4]==4)
-   	thr4="DM  core 4";
+   	thr4=" DM  core 4";
 
 
 }
@@ -148,8 +144,11 @@ void printsvg(){
 }
 
 //till here
-	
-	core_id[6]=sched_getcpu();;
+    //printf("%d\n",svgout);	
+	core_id[6]=sched_getcpu();
+	//printf("core_id[6]=%d\n",core_id[6]);
+
+	//printf("%d\n",svgout);
 
 	if(core_id[6]==0)
    	thr6="Print svg  core 0";
@@ -161,7 +160,15 @@ void printsvg(){
    	thr6="Print svg  core 3";
 	else if(core_id[6]==4)
    	thr6="Print svg  core 4";
+   	else
+   	thr6="   ";
 
+    svgout=fopen(svgfile,"w");
+    if (svgout == NULL) {
+    fprintf(stderr,"Error - Output svg file \"%s\" not found\n",svgfile);
+    exit(-1);
+    }
+   		
 	memA="red   ";
 	int t=id[1].Ins.type,t2=ex[1].Ins.type,t3=ma[1].Ins.type,t1=inf[1].Ins.type;
 	int ins1=inf[0].Ins.id,ins2=inf[1].Ins.id,ins3=id[1].Ins.id,ins4=ex[1].Ins.id,ins5=ma[1].Ins.id;

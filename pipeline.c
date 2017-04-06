@@ -427,10 +427,20 @@ void *WB_()
 	WB();	
 }
 
+
+void *print_svg()
+{
+	while(print==1)	
+	{
+		printsvg();
+		sleep(1);
+	}	
+}
+
+
 void execute2()
 {
 
-   cores=get_nprocs();
    printf ("There are %d cores.\n", get_nprocs ());
 
 
@@ -446,6 +456,12 @@ void execute2()
 	ex[1].Ins.invalid=1;
 	ma[0].Ins.invalid=1;
 	ma[1].Ins.invalid=1;
+
+//	
+	print=1;
+	pthread_t svg;
+	pthread_create(&svg, NULL, print_svg, NULL);
+//
 
 	while(curr-4<numins)
 	{
@@ -488,6 +504,7 @@ void execute2()
 	
 	pthread_mutex_destroy(&syn);
 
+
 //till here
 
 //threading this
@@ -512,8 +529,9 @@ void execute2()
 
 //till here
 
-		printsvg();
-		
+//		printsvg();
+
+	
 		transfer();//join
 
 	//st=0;
@@ -521,7 +539,7 @@ void execute2()
 	if(flag==0)
 	{
   	
-		printf("Shell>>");
+		//printf("Shell>>");
 		int code=yyparse();
 		if(code==100)//quit
 		{return;}
@@ -534,6 +552,10 @@ void execute2()
 		++curr;
 		
 	}
+
+	print=0;
+	print=0;
+	pthread_join(svg, NULL);
 
 	printsvg();
 
@@ -582,6 +604,6 @@ void execute2()
 	void stalling()
 	{
 		if ( ex[1].Ins.invalid==0 && (ex[1].Ins.type==1 || ex[1].Ins.type==13) && ((ex[1].Ins.Rt==id[1].Ins.Rs) || ex[1].Ins.Rt==id[1].Ins.Rt) )
-		{id[1].Ins.stall=1;inf[1].Ins.stall=1;id[1].Ins.invalid=1;ex[0].Ins.invalid=1;--curr;printf("stalled\n");}
+		{id[1].Ins.stall=1;inf[1].Ins.stall=1;id[1].Ins.invalid=1;ex[0].Ins.invalid=1;--curr;/*printf("stalled\n");*/}
 
 	}

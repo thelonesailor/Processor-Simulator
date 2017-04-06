@@ -25,8 +25,8 @@ Line: END	      {/*printf("Got only end\n");*/}
 ;
 
 Expression:
-  REGDUMP END               {print_regdump();printf("Shell>>");}
-| MEMDUMP ADDR NUM END      {print_memdump($2,$3);printf("Shell>>");}
+  REGDUMP END               {print_regdump();/*printf("Shell>>");*/}
+| MEMDUMP ADDR NUM END      {print_memdump($2,$3);/*printf("Shell>>");*/}
 | STEP END                  {return 50;}        
 | QUIT END                  {return 100;}
 | GOTOEND END               {return 150;}
@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
     
     //change to keep parsing multiple times because we just want to ignore the wrong line
     do {
-        printf("Shell>>");
+        //printf("Shell>>");
         int temp=yyparse();
         if(temp==100)
         {break;}

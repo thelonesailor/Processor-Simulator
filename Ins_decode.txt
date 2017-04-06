@@ -21,16 +21,3 @@
 21)bgtz rs, label
 22)blez rs, label
 23)bltz rs, label
-
-rt<-rd
-rs<-rd
-
-rs<-rt
-
-rt<-rt
-
-Correct strcmp in if 
-Correct type
-Correct registers taken
-R/W of registers is correct
-Offset taken only when required 
